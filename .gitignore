@@ -1,0 +1,8 @@
+node_modules
+.env
+.next
+.nuxt
+.output
+dist
+.astro
+.DS_Store

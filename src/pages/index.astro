@@ -1,0 +1,32 @@
+---
+import { getFeed, imageSrc } from '../lib/feedframer.js';
+// Runs at build time, so the key never reaches the browser. Rebuild (or add an adapter) to refresh.
+const feed = await getFeed(import.meta.env.FEEDFRAMER_API_KEY ?? process.env.FEEDFRAMER_API_KEY);
+---
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Instagram feed for Astro</title>
+    <style is:global>.ff-wrap{max-width:960px;margin:0 auto;padding:2rem 1rem;font-family:system-ui,sans-serif}
+.ff-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px}
+.ff-grid a{display:block;aspect-ratio:1;overflow:hidden;background:#eee}
+.ff-grid img{width:100%;height:100%;object-fit:cover;display:block}
+.ff-note{padding:1rem;border:1px solid #f0c36d;background:#fff8e6;border-radius:6px}
+</style>
+  </head>
+  <body>
+    <main class="ff-wrap">
+      <h1>{feed.username ? `@${feed.username} on Instagram` : 'Instagram feed'}</h1>
+      {feed.error && <p class="ff-note">{feed.error}</p>}
+      {feed.status === 'invalid_token' && <p class="ff-note">This feed needs reconnecting at feedframer.com/dashboard.</p>}
+      <div class="ff-grid">
+        {feed.posts.map((post) => (
+          <a href={post.permalink} target="_blank" rel="noopener noreferrer">
+            <img src={imageSrc(post)} alt={post.altText || post.caption?.slice(0, 100) || 'Instagram post'} loading="lazy" />
+          </a>
+        ))}
+      </div>
+    </main>
+  </body>
+</html>
