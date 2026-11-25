@@ -9,6 +9,8 @@ npm install
 npm run dev
 ```
 
+No key yet? The starter still runs: without `FEEDFRAMER_API_KEY` it shows six clearly labelled placeholder tiles from `public/sample/`, so you can check the layout first. Requires Astro 7.
+
 For an existing site, put the following in `src/components/InstaStrip.astro` and import it into your page. Keep the key server-side (no `PUBLIC_` prefix).
 
 ```astro

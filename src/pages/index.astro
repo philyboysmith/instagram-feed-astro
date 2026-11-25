@@ -1,7 +1,10 @@
 ---
 import { getFeed, imageSrc } from '../lib/feedframer.js';
+import { sampleFeed } from '../lib/sample-feed.js';
 // Runs at build time, so the key never reaches the browser. Rebuild (or add an adapter) to refresh.
-const feed = await getFeed(import.meta.env.FEEDFRAMER_API_KEY ?? process.env.FEEDFRAMER_API_KEY);
+const apiKey = import.meta.env.FEEDFRAMER_API_KEY ?? process.env.FEEDFRAMER_API_KEY;
+// No key yet? Show placeholder tiles so the starter renders straight after cloning.
+const feed = apiKey?.trim() ? await getFeed(apiKey) : sampleFeed;
 ---
 <html lang="en-GB">
   <head>
@@ -18,6 +21,13 @@ const feed = await getFeed(import.meta.env.FEEDFRAMER_API_KEY ?? process.env.FEE
   <body>
     <main class="ff-wrap">
       <h1>{feed.username ? `@${feed.username} on Instagram` : 'Instagram feed'}</h1>
+      {feed.status === 'sample' && (
+        <p class="ff-note">
+          These are placeholder tiles. Connect an Instagram Business or Creator account at
+          <a href="https://feedframer.com/?utm_source=github&utm_medium=starter&utm_campaign=astro-demo">feedframer.com</a>
+          (free plan), set <code>FEEDFRAMER_API_KEY</code> in <code>.env</code> and rebuild to show your live posts.
+        </p>
+      )}
       {feed.error && <p class="ff-note">{feed.error}</p>}
       {feed.status === 'invalid_token' && <p class="ff-note">This feed needs reconnecting at feedframer.com/dashboard.</p>}
       <div class="ff-grid">
